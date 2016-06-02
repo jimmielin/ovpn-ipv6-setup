@@ -18,7 +18,40 @@ echo "deb http://swupdate.openvpn.net/apt trusty main" > /etc/apt/sources.list.d
 apt-get update && apt-get install openvpn
 ~~~~
 
-* Generate certificates & keys using `easy-rsa`
+* Generate certificates & keys using `easy-rsa` (https://github.com/OpenVPN/easy-rsa)
+I'm using 2.0, but you can also follow the instructions in their `README.quickstart` for 3.0.
+~~~~
+cd /tmp
+wget https://github.com/OpenVPN/easy-rsa/archive/release/2.x.zip
+unzip 2.x.zip
+cp -R easy-rsa-release-2.x/easy-rsa /etc/openvpn
+cd /etc/openvpn/easy-rsa/
+chmod -R 777 2.0
+cd 2.0
+~~~~
+
+Edit the vars -- configure the country, province and all that stuff if you like. (`vi vars` or whatever editor you like)
+
+~~~~
+source vars
+./clean-all
+./pkitool -initca
+./pkitool -server server
+~~~~
+Don't just enter enter through -- there are two "yes"s you need to answer at the end.
+
+~~~~
+./pkitool client1
+~~~~
+Create as many client certificates you need.
+
+Build the Diffie-Hellman Parameters.
+~~~~
+./build-dh
+~~~~
+
+Retrieve the necessary client keys from your server (using whatever method you like.)
+
 * Configure `/etc/openvpn/server.conf` and `client.ovpn`
 It is advisable to harden the security of the encryption, key exchange, and message validation. DNS servers should also be pushed to the client due to DNS poisoning.
 
