@@ -10,6 +10,7 @@ This was set up on a OpenVZ VPS running Ubuntu (14.04.4 LTS, Kernel 2.6.32).
 
 ### Installing OpenVPN on Ubuntu
 * Install using `apt-get install openvpn` ...
+
 Notice that the default `openvpn` package on the Ubuntu/Debian repo is seriously out of date (2.3.2/2.3.3), and does not support TLSv1.0+ and more strong TLS ciphers. You should follow the instructions in the OpenvpnSoftwareRepos Wiki page at the OpenVPN Community. For Ubuntu Trusty:
 
 ~~~~
@@ -53,10 +54,12 @@ Build the Diffie-Hellman Parameters.
 Retrieve the necessary client keys from your server (using whatever method you like.)
 
 * Configure `/etc/openvpn/server.conf` and `client.ovpn`
+
 It is advisable to harden the security of the encryption, key exchange, and message validation. DNS servers should also be pushed to the client due to DNS poisoning.
 
 ### Configuring iptables
 * Route all traffic through VPN
+
 If you are not on OpenVZ and can handle kernel modules, and your IPv4 address changes frequently, then you can use the MASQUERADE option in iptables:
 
 ~~~~
@@ -72,9 +75,11 @@ iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j SNAT --to-source 0.0.0.0
 
 ### Extras
 * General Security Practices
+
 See the "16 Tips on OpenVPN Security" below for a good reference. In the `server.conf` and `client.ovpn` examples I included, I restricted the TLS version, TLS cipher suites, HMAC algorithm & the cipher suite settings.
 
 * Circumventing censorship & DPI
+
 Currently it seems like CNGI-CERNET2/6x does not do as much blocking as the IPv4 China Internet or CERNET does, as reportedly SSH connections in IPv4 will trigger warnings and result in automated IP bans, depending on the region. In the future, it would be wise to run `obfs4proxy` (Go) or `obfsproxy` (Python) and use a more "common" port (443, as encrypted via 80 is certainly suspicious).
 
 Running vanilla TLS OpenVPN via port 443 is not advisable since it is known that deep-packet inspection (DPI) is being employed, and SSH, OpenVPN/TLS have very distinct handshakes that will certainly trigger DPI. However, right now, it is not a concern for me as supposedly IPv6 address blocking is still not active in CERNET2, except for the big target -- Google. (And I thought we were promised Google Scholar in CERNET?)
