@@ -80,6 +80,12 @@ iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j SNAT --to-source 0.0.0.0
 
 If you used the `server.conf` in the repo and you get this on connecting, don't panic (GFW is notorious for RST packets, but this is not the problem this time.) -- check `/etc/openvpn/openvpn.log`, you might see messages indicating a failure in cipher negotiation. This means that one of your client / servers is not supporting elliptic-curve ciphers that we're exclusively using in the above server configuration. If so, you have to change the above to also include `TLS-DHE-RSA-WITH-AES-256-GCM-SHA384`.
 
+* Windows 8+ DNS Leak
+
+Starting from Windows 8, Windows seems to decide to pick DNS servers of its own depending on latency, and leaking DNS requests originating from the client computer. This often makes the VPN use the local DNS servers instead; in CERNET2, this means often resorting to IPv6-addresses that may be blocked by the GFW (e.g. Medium, Google, Twitter, etc.). So that inconvenience and the obvious security concern can be fixed by using the `block-outside-dns` option, which was patched by this ticket: https://community.openvpn.net/openvpn/ticket/605
+
+This is the same trick that most commercial VPN providers use to block outside DNS traffic. However, it is not compatible with XP or non-Windows clients (since there is no such problem on those clients), and you should remove `push block-outside-dns` if you aren't using a Windows 8+ client.
+
 ### Extras
 * General Security Practices
 
