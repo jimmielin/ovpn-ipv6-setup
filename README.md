@@ -34,19 +34,20 @@ cd 2.0
 ~~~~
 
 Edit the vars -- configure the country, province and all that stuff if you like. (`vi vars` or whatever editor you like)
+For extra paranoia you can also increase `KEY_SIZE` to 4096-bits; note that this will greatly slow down the Diffie-Hellman Parameters' generation speed.
 
 ~~~~
 source vars
 ./clean-all
-./pkitool -initca
-./pkitool -server server
+./pkitool --initca
+./pkitool --server server
 ~~~~
 Don't just enter enter through -- there are two "yes"s you need to answer at the end.
 
 ~~~~
 ./pkitool client1
 ~~~~
-Create as many client certificates you need.
+Create as many client certificates you need by changing the `client1` cert name. You will need to retrieve the server cert & the client cert and keys later from the server using a method of your choice. Use secure channels; a leakage of the key is fatal to the security of the VPN traffic, obviously.
 
 Build the Diffie-Hellman Parameters.
 ~~~~
