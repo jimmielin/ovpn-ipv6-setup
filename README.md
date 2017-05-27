@@ -56,6 +56,24 @@ Build the Diffie-Hellman Parameters.
 
 Retrieve the necessary client keys from your server (using whatever method you like.)
 
+* OpenVPN 2.4+: Use tls-crypt!
+
+OpenVPN 2.4+ has a `tls-crypt` option that encrypts and authenticates all control channel packets with a key from `--tls-crypt keyfile`. Consult the OpenVPN 2.4 manpage for more background, but it is pretty good, so you should use it as an extra layer of protection, which allows OpenVPN traffic to be less prominent.
+
+First, generate a key file (I called it `my_secret` in `server.conf`):
+
+~~~~
+openvpn --genkey my_secret
+~~~~
+
+Use a secure protocol (already trusted) to securely transmit `my_secret` to every client, and add the following option for client/server conf:
+
+```
+tls-crypt my_secret
+```
+
+This should allow you to use the better capabilities.
+
 * Configure `/etc/openvpn/server.conf` and `client.ovpn`
 
 It is advisable to harden the security of the encryption, key exchange, and message validation. DNS servers should also be pushed to the client due to DNS poisoning.
@@ -108,6 +126,16 @@ Once you start communicating to your server from OpenVPN in China, your server *
 
 It is advisable (this is unrelated to OpenVPN) to setup public key authentication via SSH & also install `fail2ban` to kick these GFW stuff away. Alternatively, if you have a static IP address (unlikely in China, since carrier-grade NATs are used to cope with IPv4 exhaustion) you can block all other IP accesses to your server. Also, if you are behind CERNET2 too, you can simply block IPv4.
 
+In OpenVPN 2.4, a new `tls-crypt` option was added which adds a sort-of HMAC firewall in front of OpenVPN, allowing non-signed packets to be dropped immediately. The GFW already **actively** calls suspected tor nodes to confirm they are tor nodes and block them, and a crackdown on OpenVPN servers is not at all unlikely. This will allow the signature of the OpenVPN servers out there to be less prominent, and if you have all clients on 2.4+, you should use it.
+
+* OpenVPN 2.4 Changes/Deprecated/Incompatibilities
+
+I've updated the configs to match OpenVPN 2.4 release now. `ns-cert-type` is deprecated and replaced with the more modern `remote-cert-tls` on client end.
+
+`tls-crypt` only supports OpenVPN 2.4, see above.
+
+OpenVPN 2.3+ supports a better IP address allocation mechanism server-end option `topology subnet`. If you have older devices and this breaks them, remove it and it will default to the older `topology net30`.
+
 ## Credits
 Thanks to the following resources I've found on the internet (links working as of June 2016)
 * 16 Tips on OpenVPN Security - blog.g3rt.nl - https://blog.g3rt.nl/openvpn-security-tips.html
@@ -123,3 +151,4 @@ Thanks to the following resources I've found on the internet (links working as o
 OpenVPN Documentation Pages
 * Ubuntu/Debian Software Repos - https://community.openvpn.net/openvpn/wiki/OpenvpnSoftwareRepos
 * Hardening OpenVPN Security - https://community.openvpn.net/openvpn/wiki/Hardening
+* OpenVPN 2.4 manpage - https://community.openvpn.net/openvpn/wiki/Openvpn24ManPage
