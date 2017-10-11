@@ -63,7 +63,7 @@ OpenVPN 2.4+ has a `tls-crypt` option that encrypts and authenticates all contro
 First, generate a key file (I called it `my_secret` in `server.conf`):
 
 ~~~~
-openvpn --genkey my_secret
+openvpn --genkey --secret my_secret
 ~~~~
 
 Use a secure protocol (already trusted) to securely transmit `my_secret` to every client, and add the following option for client/server conf:
