@@ -103,6 +103,16 @@ If you used the `server.conf` in the repo and you get this on connecting, don't 
 
 If you're running another different distro, the sole iptables command for routing all traffic through VPN is not sufficient; you need to enable `net.ipv4.ip_forward` in `/etc/sysctl.conf` in order to allow IPv4 forwarding.
 
+If you are running CentOS 7, these firewall commands using `firewall-cmd` can be used instead of `iptables`:
+
+~~~~
+firewall-cmd --permanent --add-service openvpn
+firewall-cmd --permanent --zone=trusted --add-interface=tun0
+firewall-cmd --permanent --zone=trusted --add-masquerade
+firewall-cmd --permanent --direct --passthrough ipv4 -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
+firewall-cmd --reload
+~~~~
+
 ### Extras
 * Windows 8+ DNS Leak
 
